@@ -5,7 +5,7 @@
  * Автоматически сохраняет и синхронизирует данные с Supabase PostgreSQL.
  */
 
-import { UserProfile, UserProgressState, UserStats } from '../../src/types/game';
+import { UserProfile, UserProgressState, UserStats } from './types';
 import { CINDERELLA_EPISODE_1 } from './storyData';
 import { supabaseAdmin } from './supabase';
 
