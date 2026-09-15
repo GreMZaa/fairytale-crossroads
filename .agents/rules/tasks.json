@@ -1,0 +1,74 @@
+[
+  {
+    "id": "TASK-01",
+    "title": "Проектирование схемы БД (Supabase)",
+    "category": "infrastructure",
+    "status": "done",
+    "description": "Создать таблицы users, user_stats, stories, episodes и user_progress.",
+    "acceptance_criteria": "Таблицы созданы в Supabase, типы экспортированы в проект."
+  },
+  {
+    "id": "TASK-02",
+    "title": "Настройка RLS (Row Level Security)",
+    "category": "security",
+    "status": "done",
+    "description": "Настроить политики deny-by-default. Пользователи могут читать/писать только свой user_progress.",
+    "acceptance_criteria": "Анонимные запросы отклоняются. Авторизованные видят только свои данные по telegram_id."
+  },
+  {
+    "id": "TASK-03",
+    "title": "Криптографическая валидация Telegram initData",
+    "category": "security",
+    "status": "done",
+    "description": "Реализовать middleware для проверки HMAC-SHA256 подписи от TMA.",
+    "acceptance_criteria": "Эндпоинты API отклоняют запросы с неверной или просроченной подписью."
+  },
+  {
+    "id": "TASK-04",
+    "title": "Интеграция Telegram Bot API (Webhook/Long Polling)",
+    "category": "integration",
+    "status": "done",
+    "description": "Настроить обработку команды /start, регистрацию пользователя в БД и выдачу стартовых алмазов.",
+    "acceptance_criteria": "При отправке /start бот присылает кнопку для запуска TMA, а в БД появляется запись юзера."
+  },
+  {
+    "id": "TASK-05",
+    "title": "Инициализация TMA и блокировка свайпов",
+    "category": "ui",
+    "status": "done",
+    "description": "Настроить Telegram.WebApp.expand(), отключить overscroll-behavior и добавить Haptic Feedback.",
+    "acceptance_criteria": "Игра открывается на весь экран, случайный свайп вниз не закрывает приложение."
+  },
+  {
+    "id": "TASK-06",
+    "title": "Движок: Эффект «Печатной машинки»",
+    "category": "ui",
+    "status": "done",
+    "description": "Создать React-компонент для посимвольного вывода текста диалогов.",
+    "acceptance_criteria": "Текст появляется плавно, при тапе по экрану выводится моментально."
+  },
+  {
+    "id": "TASK-07",
+    "title": "Движок: Слоистая архитектура рендера",
+    "category": "ui",
+    "status": "done",
+    "description": "Настроить Z-Index для фонов (z-0), спрайтов (z-20) и UI-элементов (z-30).",
+    "acceptance_criteria": "Персонажи не перекрывают диалоговое окно, смена фонов работает через Framer Motion."
+  },
+  {
+    "id": "TASK-08",
+    "title": "API сохранения прогресса и статов",
+    "category": "functional",
+    "status": "done",
+    "description": "Эндпоинт POST /api/progress/save для записи выбранного ответа и обновления очков пути (Свет/Тьма).",
+    "acceptance_criteria": "Выбор игрока сохраняется в БД, статы корректно инкрементируются."
+  },
+  {
+    "id": "TASK-09",
+    "title": "Интеграция рекламной монетизации (Rewarded Ads)",
+    "category": "integration",
+    "status": "done",
+    "description": "Подключить показ рекламы и эндпоинт безопасного начисления кристаллов после просмотра.",
+    "acceptance_criteria": "Игрок смотрит видео, сервер проверяет коллбек и начисляет +2 кристалла."
+  }
+]
