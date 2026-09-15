@@ -12,8 +12,8 @@ export interface UseTypewriterOptions {
 }
 
 export function useTypewriter(text: string, options: UseTypewriterOptions = {}) {
-  const { speed = 35, onCharacter, onComplete } = options;
-  const [displayedText, setDisplayedText] = useState('');
+  const { speed = 18, onCharacter, onComplete } = options;
+  const [displayedText, setDisplayedText] = useState(text ? text.slice(0, 1) : '');
   const [isCompleted, setIsCompleted] = useState(false);
 
   const textRef = useRef(text);

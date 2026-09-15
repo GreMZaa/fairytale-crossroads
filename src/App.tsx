@@ -45,6 +45,7 @@ export const App: React.FC = () => {
   const [isFailState, setIsFailState] = useState<boolean>(false);
   const [isMagicState, setIsMagicState] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [activeActionAnimation, setActiveActionAnimation] = useState<'plunger' | 'boards' | 'magic_shawl' | 'ice_amulet' | 'water' | null>(null);
 
   // Модальные окна
   const [isStatsOpen, setIsStatsOpen] = useState<boolean>(false);
@@ -54,6 +55,7 @@ export const App: React.FC = () => {
 
   const episode = CINDERELLA_EPISODE_1;
   const currentNode = episode.nodes[currentNodeId] || episode.nodes['node_1'];
+  const currentStep = currentNodeId === 'node_1' ? 1 : currentNodeId === 'node_2_timer' ? 2 : 3;
 
   // Инициализация профиля с бэкенда
   useEffect(() => {
@@ -94,6 +96,14 @@ export const App: React.FC = () => {
       return;
     }
 
+    // Запуск сочной визуальной анимации действия (Вантуз, Доски, Магия)
+    if (['plunger', 'boards', 'magic_shawl', 'ice_amulet'].includes(choice.item_icon)) {
+      setActiveActionAnimation(choice.item_icon as any);
+      setTimeout(() => {
+        setActiveActionAnimation(null);
+      }, 1300);
+    }
+
     try {
       const res = await fetch('/api/progress/save', {
         method: 'POST',
@@ -125,18 +135,22 @@ export const App: React.FC = () => {
           soundEngine.playPlungerFail();
           hapticNotification('error');
           setIsFailState(true);
-          setTimeout(() => setIsFailState(false), 800);
+          setTimeout(() => setIsFailState(false), 900);
         } else if (choice.result === 'premium_success') {
           soundEngine.playMagicChime();
           if (choice.id === 'choice_ice_amulet') soundEngine.playIceFreeze();
           hapticNotification('success');
           setIsMagicState(true);
-          setTimeout(() => setIsMagicState(false), 1200);
-          setCurrentNodeId(data.nextNodeId);
+          setTimeout(() => {
+            setIsMagicState(false);
+            setCurrentNodeId(data.nextNodeId);
+          }, 1200);
         } else {
           soundEngine.playClick();
           hapticNotification('success');
-          setCurrentNodeId(data.nextNodeId);
+          setTimeout(() => {
+            setCurrentNodeId(data.nextNodeId);
+          }, 800);
         }
       } else {
         hapticNotification('error');
@@ -146,9 +160,11 @@ export const App: React.FC = () => {
       if (choice.result === 'fail') {
         soundEngine.playPlungerFail();
         setIsFailState(true);
-        setTimeout(() => setIsFailState(false), 800);
+        setTimeout(() => setIsFailState(false), 900);
       } else {
-        setCurrentNodeId(choice.next_node);
+        setTimeout(() => {
+          setCurrentNodeId(choice.next_node);
+        }, 800);
       }
     }
   };
@@ -229,108 +245,133 @@ export const App: React.FC = () => {
   const isEpisodeFinished = currentNodeId === 'node_finish';
 
   return (
-    <div className="relative w-full h-full min-h-screen bg-slate-950 flex flex-col justify-between overflow-hidden">
-      {/* Верхняя статус-панель */}
-      <TopBar
-        crystals={profile.crystals}
-        keys={profile.keys}
-        stats={profile.stats}
-        isMuted={isMuted}
-        onToggleSound={handleToggleSound}
-        onOpenStats={() => setIsStatsOpen(true)}
-        onOpenShop={() => {
-          setAdContext('free_crystals');
-          setIsAdOpen(true);
-        }}
-      />
+    <div className="relative w-full min-h-screen bg-slate-950 flex items-center justify-center overflow-hidden">
+      {/* Фоновый размытый арт для десктопных широкоформатных мониторов */}
+      <div className="absolute inset-0 z-0 hidden md:block overflow-hidden pointer-events-none select-none">
+        <img
+          src={
+            currentNode.background === 'corridor_fire'
+              ? '/assets/backgrounds/corridor_fire.png'
+              : '/assets/backgrounds/attic_ice.png'
+          }
+          alt=""
+          className="w-full h-full object-cover filter blur-3xl opacity-30 scale-110"
+        />
+        <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-2xl" />
+      </div>
 
-      {/* 5-слойный игровой движок */}
-      <LayerEngine
-        node={currentNode}
-        isFailState={isFailState}
-        isMagicState={isMagicState}
-      >
-        {/* Всплывающее сообщение с результатом выбора */}
-        {feedbackMessage && (
-          <div className="mb-2 p-2.5 rounded-xl bg-slate-900/90 border border-amber-500/40 text-amber-200 text-xs text-center backdrop-blur-md animate-fade-in shadow-lg">
-            {feedbackMessage}
-          </div>
-        )}
+      {/* Основной контейнер мобильного Telegram Mini App */}
+      <div className="relative w-full max-w-[430px] h-[100dvh] md:h-[860px] md:max-h-[92vh] md:rounded-[36px] md:shadow-[0_25px_80px_rgba(0,0,0,0.95),0_0_0_1px_rgba(255,255,255,0.08),0_0_50px_rgba(245,158,11,0.12)] overflow-hidden flex flex-col bg-slate-950 select-none z-10">
+        {/* Верхняя статус-панель */}
+        <TopBar
+          crystals={profile.crystals}
+          keys={profile.keys}
+          stats={profile.stats}
+          isMuted={isMuted}
+          currentStep={currentStep}
+          totalSteps={3}
+          onToggleSound={handleToggleSound}
+          onOpenStats={() => setIsStatsOpen(true)}
+          onOpenShop={() => {
+            setAdContext('free_crystals');
+            setIsAdOpen(true);
+          }}
+        />
 
-        {/* Диалоговое окно персонажа */}
-        {currentNode.dialogue && (
-          <div className="mb-3">
-            <DialogueBox
-              speaker={currentNode.dialogue.speaker}
-              text={currentNode.dialogue.text}
-              showNextButton={!currentNode.puzzle && !currentNode.timer_rescue && !isEpisodeFinished}
-              onClickNext={() => {
-                if (currentNode.summary?.next_episode_id) {
-                  // завершение
-                }
-              }}
+        {/* 5-слойный игровой движок */}
+        <LayerEngine
+          node={currentNode}
+          isFailState={isFailState}
+          isMagicState={isMagicState}
+          activeActionAnimation={activeActionAnimation}
+          onHotspotClick={() => {
+            soundEngine.playClick();
+            hapticImpact('light');
+          }}
+        >
+          {/* Всплывающее сообщение с результатом выбора */}
+          {feedbackMessage && (
+            <div className="mb-2 p-2.5 rounded-xl bg-slate-900/95 border border-amber-500/50 text-amber-200 text-xs text-center backdrop-blur-md animate-fade-in shadow-xl">
+              {feedbackMessage}
+            </div>
+          )}
+
+          {/* Диалоговое окно персонажа */}
+          {currentNode.dialogue && (
+            <div className="mb-2.5">
+              <DialogueBox
+                speaker={currentNode.dialogue.speaker}
+                text={currentNode.dialogue.text}
+                characterId={currentNode.character?.id}
+                showNextButton={!currentNode.puzzle && !currentNode.timer_rescue && !isEpisodeFinished}
+                onClickNext={() => {
+                  if (currentNode.summary?.next_episode_id) {
+                    // завершение
+                  }
+                }}
+              />
+            </div>
+          )}
+
+          {/* Интерактивная головоломка со спасением героини (3 предмета) */}
+          {currentNode.puzzle && (
+            <ChoiceButtons
+              choices={currentNode.puzzle.choices}
+              userCrystals={profile.crystals}
+              onSelectChoice={handleSelectChoice}
+              onWatchAdForChoice={handleWatchAdForChoice}
             />
-          </div>
-        )}
+          )}
 
-        {/* Интерактивная головоломка со спасением героини (3 предмета) */}
-        {currentNode.puzzle && (
-          <ChoiceButtons
-            choices={currentNode.puzzle.choices}
-            userCrystals={profile.crystals}
-            onSelectChoice={handleSelectChoice}
-            onWatchAdForChoice={handleWatchAdForChoice}
-          />
-        )}
+          {/* Механика ожидания (Таймер взлома двери) */}
+          {currentNode.timer_rescue && (
+            <TimerRescue
+              timerData={currentNode.timer_rescue}
+              userCrystals={profile.crystals}
+              onSpeedupAd={handleSpeedupTimerAd}
+              onSpeedupCrystals={handleSpeedupTimerCrystals}
+              onTimerFinished={() => setCurrentNodeId('node_3_fire')}
+            />
+          )}
+        </LayerEngine>
 
-        {/* Механика ожидания (Таймер взлома двери) */}
-        {currentNode.timer_rescue && (
-          <TimerRescue
-            timerData={currentNode.timer_rescue}
-            userCrystals={profile.crystals}
-            onSpeedupAd={handleSpeedupTimerAd}
-            onSpeedupCrystals={handleSpeedupTimerCrystals}
-            onTimerFinished={() => setCurrentNodeId('node_3_fire')}
-          />
-        )}
-      </LayerEngine>
+        {/* Модалка просмотра Rewarded Ads (+2 💎) */}
+        <AdModal
+          isOpen={isAdOpen}
+          onClose={() => {
+            setIsAdOpen(false);
+            setPendingChoice(null);
+          }}
+          onRewardClaimed={handleRewardClaimed}
+          title={
+            adContext === 'choice_shawl'
+              ? 'Посмотрите ролик, чтобы открыть Магическую шаль бесплатно!'
+              : adContext === 'timer'
+              ? 'Посмотрите ролик, чтобы мгновенно выбить засов двери!'
+              : 'Посмотрите ролик для получения +2 Кристаллов 💎'
+          }
+        />
 
-      {/* Модалка просмотра Rewarded Ads (+2 💎) */}
-      <AdModal
-        isOpen={isAdOpen}
-        onClose={() => {
-          setIsAdOpen(false);
-          setPendingChoice(null);
-        }}
-        onRewardClaimed={handleRewardClaimed}
-        title={
-          adContext === 'choice_shawl'
-            ? 'Посмотрите ролик, чтобы открыть Магическую шаль бесплатно!'
-            : adContext === 'timer'
-            ? 'Посмотрите ролик, чтобы мгновенно выбить засов двери!'
-            : 'Посмотрите ролик для получения +2 Кристаллов 💎'
-        }
-      />
+        {/* Модалка детальной статистики персонажа */}
+        <StatsModal
+          isOpen={isStatsOpen}
+          onClose={() => setIsStatsOpen(false)}
+          stats={profile.stats}
+          crystals={profile.crystals}
+          keys={profile.keys}
+        />
 
-      {/* Модалка детальной статистики персонажа */}
-      <StatsModal
-        isOpen={isStatsOpen}
-        onClose={() => setIsStatsOpen(false)}
-        stats={profile.stats}
-        crystals={profile.crystals}
-        keys={profile.keys}
-      />
-
-      {/* Финальный экран завершения первого эпизода */}
-      <EpisodeFinishedModal
-        isOpen={isEpisodeFinished}
-        stats={profile.stats}
-        rewardCrystals={5}
-        onRestart={() => {
-          setCurrentNodeId('node_1');
-          setFeedbackMessage(null);
-        }}
-      />
+        {/* Финальный экран завершения первого эпизода */}
+        <EpisodeFinishedModal
+          isOpen={isEpisodeFinished}
+          stats={profile.stats}
+          rewardCrystals={5}
+          onRestart={() => {
+            setCurrentNodeId('node_1');
+            setFeedbackMessage(null);
+          }}
+        />
+      </div>
     </div>
   );
 };
