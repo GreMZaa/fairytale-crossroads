@@ -5,7 +5,7 @@
  */
 
 import 'dotenv/config';
-import { UserService } from '../api/lib/userService';
+import { UserService } from '../api/lib/userService.js';
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || 'DEMO_BOT_TOKEN';
 const WEBAPP_URL = process.env.VITE_WEBAPP_URL || 'http://localhost:3000';

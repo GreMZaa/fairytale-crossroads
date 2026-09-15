@@ -5,7 +5,7 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { handleUpdate } from '../../bot/index';
+import { handleUpdate } from '../../bot/index.js';
 
 export async function handleBotWebhook(body: any, secretHeader?: string) {
   const expectedSecret = process.env.TELEGRAM_WEBHOOK_SECRET;

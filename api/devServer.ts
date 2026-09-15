@@ -4,11 +4,11 @@
  */
 
 import type { Plugin, ViteDevServer } from 'vite';
-import { handleGetStories } from './stories/index';
-import { handleSaveProgress } from './progress/save';
-import { handleAdReward } from './ads/reward';
-import { handleGetProfile } from './profile/index';
-import { handleBotWebhook } from './bot/webhook';
+import { handleGetStories } from './stories/index.js';
+import { handleSaveProgress } from './progress/save.js';
+import { handleAdReward } from './ads/reward.js';
+import { handleGetProfile } from './profile/index.js';
+import { handleBotWebhook } from './bot/webhook.js';
 
 export function gameApiPlugin(): Plugin {
   return {

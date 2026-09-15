@@ -5,9 +5,9 @@
  * Автоматически сохраняет и синхронизирует данные с Supabase PostgreSQL.
  */
 
-import { UserProfile, UserProgressState, UserStats } from './types';
-import { CINDERELLA_EPISODE_1 } from './storyData';
-import { supabaseAdmin } from './supabase';
+import { UserProfile, UserProgressState, UserStats } from './types.js';
+import { CINDERELLA_EPISODE_1 } from './storyData.js';
+import { supabaseAdmin } from './supabase.js';
 
 const inMemoryUsers = new Map<number, UserProfile>();
 const inMemoryProgress = new Map<string, UserProgressState>();

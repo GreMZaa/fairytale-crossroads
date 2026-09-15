@@ -3,7 +3,7 @@
  * База знаний и серверное дерево новелл
  */
 
-import { Story, StoryEpisode } from './types';
+import { Story, StoryEpisode } from './types.js';
 
 export const CINDERELLA_EPISODE_1: StoryEpisode = {
   id: 'cinderella-ep1',

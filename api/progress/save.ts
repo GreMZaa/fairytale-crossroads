@@ -5,8 +5,8 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { validateTelegramInitData } from '../auth/validate';
-import { UserService } from '../lib/userService';
+import { validateTelegramInitData } from '../auth/validate.js';
+import { UserService } from '../lib/userService.js';
 
 interface SaveRequestBody {
   initData?: string;

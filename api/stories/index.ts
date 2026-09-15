@@ -4,7 +4,7 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { INITIAL_STORIES } from '../lib/storyData';
+import { INITIAL_STORIES } from '../lib/storyData.js';
 
 export async function handleGetStories() {
   return {
