@@ -4,6 +4,7 @@
  * @security Безопасное начисление +2 💎 после просмотра рекламы
  */
 
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { validateTelegramInitData } from '../auth/validate';
 import { UserService } from '../lib/userService';
 
@@ -37,7 +38,7 @@ export async function handleAdReward(body: AdRewardRequestBody, botToken?: strin
   }
 
   try {
-    const rewardAmount = 2; // Фиксированная серверная награда
+    const rewardAmount = 2;
     const result = await UserService.rewardAdView(authenticatedTelegramId, rewardAmount);
 
     return {
@@ -54,4 +55,14 @@ export async function handleAdReward(body: AdRewardRequestBody, botToken?: strin
       body: { success: false, error: 'Failed to credit ad reward' }
     };
   }
+}
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  const result = await handleAdReward(req.body || {}, botToken);
+  return res.status(result.status).json(result.body);
 }

@@ -4,6 +4,7 @@
  * Получение профиля игрока (баланс кристаллов, ключей, статистика)
  */
 
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { validateTelegramInitData } from '../auth/validate';
 import { UserService } from '../lib/userService';
 
@@ -49,4 +50,14 @@ export async function handleGetProfile(body: { initData?: string; telegram_id?: 
       body: { success: false, error: 'Failed to fetch user profile' }
     };
   }
+}
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  const result = await handleGetProfile(req.body || {}, botToken);
+  return res.status(result.status).json(result.body);
 }

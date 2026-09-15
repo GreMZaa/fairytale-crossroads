@@ -4,10 +4,10 @@
  * @security Webhook для обработки апдейтов Telegram Bot в serverless среде Vercel
  */
 
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { handleUpdate } from '../../bot/index';
 
 export async function handleBotWebhook(body: any, secretHeader?: string) {
-  // Проверка секретного токена вебхука (X-Telegram-Bot-Api-Secret-Token)
   const expectedSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
   if (expectedSecret && secretHeader !== expectedSecret) {
     return {
@@ -30,4 +30,14 @@ export async function handleBotWebhook(body: any, secretHeader?: string) {
       body: { error: 'Internal Server Error' }
     };
   }
+}
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  const secret = req.headers['x-telegram-bot-api-secret-token'] as string;
+  const result = await handleBotWebhook(req.body, secret);
+  return res.status(result.status).json(result.body);
 }

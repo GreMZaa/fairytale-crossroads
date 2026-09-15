@@ -4,6 +4,7 @@
  * @security Защита от Mass Assignment, IDOR/BOLA и проверка HMAC Telegram initData
  */
 
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { validateTelegramInitData } from '../auth/validate';
 import { UserService } from '../lib/userService';
 
@@ -30,7 +31,6 @@ export async function handleSaveProgress(body: SaveRequestBody, botToken?: strin
     }
     authenticatedTelegramId = authResult.user.id;
   } else if (process.env.NODE_ENV !== 'production' && body.telegram_id) {
-    // В dev-режиме разрешен тестовый telegram_id при отсутствии токена бота
     authenticatedTelegramId = Number(body.telegram_id);
   }
 
@@ -41,7 +41,7 @@ export async function handleSaveProgress(body: SaveRequestBody, botToken?: strin
     };
   }
 
-  // 2. Валидация входных параметров (исключение лишних полей / Mass Assignment)
+  // 2. Валидация входных параметров
   const { story_id, episode_id, node_id, choice_id } = body;
   if (!story_id || !episode_id || !node_id || !choice_id) {
     return {
@@ -69,4 +69,14 @@ export async function handleSaveProgress(body: SaveRequestBody, botToken?: strin
       body: { success: false, error: 'Failed to process progress save' }
     };
   }
+}
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  const result = await handleSaveProgress(req.body || {}, botToken);
+  return res.status(result.status).json(result.body);
 }
