@@ -18,6 +18,7 @@ interface ChoiceButtonsProps {
   userCrystals: number;
   onSelectChoice: (choice: PuzzleChoice) => void;
   onWatchAdForChoice?: (choice: PuzzleChoice) => void;
+  onClose?: () => void;
   disabled?: boolean;
 }
 
@@ -26,6 +27,7 @@ export const ChoiceButtons: React.FC<ChoiceButtonsProps> = ({
   userCrystals,
   onSelectChoice,
   onWatchAdForChoice,
+  onClose,
   disabled = false
 }) => {
   const renderItemIcon = (iconName: string) => {
@@ -73,9 +75,19 @@ export const ChoiceButtons: React.FC<ChoiceButtonsProps> = ({
           <span>🛠️</span>
           <span>Выберите решение:</span>
         </span>
-        <span className="text-[10px] text-slate-400 font-semibold">
-          1 из 3
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-slate-400 font-semibold">
+            1 из 3
+          </span>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="text-[10px] text-amber-300 hover:text-white px-2 py-0.5 rounded-full bg-slate-900/90 border border-amber-500/40 active:scale-90 transition-transform"
+            >
+              Свернуть ✕
+            </button>
+          )}
+        </div>
       </div>
 
       {choices.map((choice) => {
