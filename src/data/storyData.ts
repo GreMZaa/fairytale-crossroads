@@ -1,246 +1,195 @@
 /**
  * @file storyData.ts
- * Полная сюжетная линия и этапы обустройства комнаты в точном соответствии со скринами Tile Family (Primer/)
+ * Сюжетное дерево новеллы «Сказки: Перекрестки Судеб»
  */
 
-import { RenovationStage } from '../types/game';
+import { StoryEpisode } from '../types/game';
 
-export const RENOVATION_STAGES: RenovationStage[] = [
-  // Этап 0: Заледенелая комната, замерзающая семья, прорыв трубы (Primer/1.jpg - 12.jpg)
-  {
-    step: 0,
-    background: '/assets/primer/12.jpg',
-    title: 'Ледяной чердак: Прорыв трубы',
-    dialogues: [
-      {
-        speaker: 'Изабелла',
-        text: 'Наконец здесь! Нет времени объяснять — заходите, вы нужны нам.',
-        avatar: '/assets/primer/1.jpg',
-        ribbonColor: 'blue'
+export const CINDERELLA_EPISODE_1: StoryEpisode = {
+  id: 'cinderella-ep1',
+  story_id: 'cinderella',
+  episode_number: 1,
+  title: 'Ледяная Башня',
+  description: 'Метель за разбитым окном заброшенного чердака. До бала остались считанные часы.',
+  initial_node_id: 'node_1',
+  nodes: {
+    node_1: {
+      id: 'node_1',
+      title: 'Холодный старт',
+      background: 'attic_ice',
+      bg_music: 'tower_theme',
+      ambient: 'blizzard_wind',
+      character: {
+        id: 'cinderella',
+        name: 'Золушка',
+        emotion: 'shivering',
+        avatar: '/assets/characters/cinderella_cold.png',
+        position: 'center'
       },
-      {
-        speaker: 'Лестер',
-        text: 'Ох, здесь жутко холодно. Подпиши договор, и ты наконец оставишь это ветхое место позади.',
-        avatar: '/assets/primer/2.jpg',
-        ribbonColor: 'red'
+      dialogue: {
+        speaker: 'Золушка',
+        text: 'Мачеха заперла меня здесь перед самым балом... Ледяной ветер из разбитого окна пронизывает до костей! Если я ничего не предприму, я просто замерзну.'
       },
-      {
-        speaker: 'Миа',
-        text: '(Мама, нет...)',
-        avatar: '/assets/primer/3.jpg',
-        ribbonColor: 'blue'
-      },
-      {
-        speaker: 'Изабелла',
-        text: 'Хватит, Лестер! Не уедем, наш дом тут.',
-        avatar: '/assets/primer/4.jpg',
-        ribbonColor: 'blue'
-      },
-      {
-        speaker: 'Лестер',
-        text: 'Будь трезв: без меня зиму не переживёте.',
-        avatar: '/assets/primer/5.jpg',
-        ribbonColor: 'red'
-      },
-      {
-        speaker: 'Изабелла',
-        text: 'Не притворяйся. Есть тот, кто искренне нам поможет!',
-        avatar: '/assets/primer/6.jpg',
-        ribbonColor: 'blue'
-      },
-      {
-        speaker: 'Аманда',
-        text: 'Трубу разорвало от мороза! Ледяная вода заливает пол, мы замерзнем. Поможешь нам?',
-        avatar: '/assets/primer/10.jpg',
-        ribbonColor: 'blue'
+      puzzle: {
+        problem_title: 'Разбитое окно и ледяной ветер',
+        description: 'Снежная метель врывается в комнату! Выберите предмет для решения:',
+        choices: [
+          {
+            id: 'choice_boards',
+            text: 'Старые доски и гвозди',
+            item_icon: 'boards',
+            type: 'standard',
+            cost: 0,
+            result: 'success',
+            feedback_text: 'Золушка находит старый молоток и наглухо заколачивает окно досками. Ветер стихает, но теперь дверь заперта снаружи!',
+            next_node: 'node_2_timer',
+            stat_changes: {
+              courage: 1
+            }
+          },
+          {
+            id: 'choice_plunger',
+            text: 'Вантуз со стены',
+            item_icon: 'plunger',
+            type: 'fail',
+            cost: 0,
+            result: 'fail',
+            feedback_text: 'ЧПОК! Вантуз отскакивает от заледеневшей рамы и со свистом прилетает Золушке прямо в лоб! Ауч! О чем я только думала?!',
+            sound_sfx: 'plunger_fail',
+            next_node: 'node_1',
+            stat_changes: {}
+          },
+          {
+            id: 'choice_shawl',
+            text: 'Магическая шаль Крестной',
+            item_icon: 'magic_shawl',
+            type: 'premium',
+            cost: 20,
+            allow_ad: true,
+            result: 'premium_success',
+            feedback_text: 'Шаль вспыхивает лазурным сиянием! Морозный ветер превращается в теплый вихрь хрустальных бабочек. Мышонок Гас приносит ключ от замка!',
+            sound_sfx: 'magic_chime',
+            bonus_text: 'Мышонок отпирает дубовую дверь — таймер ожидания пропущен!',
+            next_node: 'node_3_fire',
+            stat_changes: {
+              courage: 2,
+              light_path: 1
+            }
+          }
+        ]
       }
-    ],
-    hotspot: {
-      id: 'pipe_repair',
-      title: 'Поставить обогреватель',
-      costStars: 2,
-      iconType: 'hammer',
-      x: 18,
-      y: 40
+    },
+    node_2_timer: {
+      id: 'node_2_timer',
+      title: 'Взлом старой двери',
+      background: 'attic_ice',
+      bg_music: 'tower_theme',
+      character: {
+        id: 'cinderella',
+        name: 'Золушка',
+        emotion: 'determined',
+        avatar: '/assets/characters/cinderella_cold.png',
+        position: 'center'
+      },
+      dialogue: {
+        speaker: 'Золушка',
+        text: 'Дверь заперта тяжелым ржавым засовом. Придется выбивать его ножкой от сломанного стула... Это займет время!'
+      },
+      timer_rescue: {
+        title: 'Взлом дубовой двери',
+        duration_seconds: 600,
+        free_action_text: 'Ждать пока засов поддастся',
+        speedup_ad_text: 'Ускорить за рекламу',
+        speedup_crystal_cost: 5,
+        next_node: 'node_3_fire'
+      }
+    },
+    node_3_fire: {
+      id: 'node_3_fire',
+      title: 'Пламя в коридоре',
+      background: 'corridor_fire',
+      bg_music: 'fire_escape_theme',
+      character: {
+        id: 'cinderella',
+        name: 'Золушка',
+        emotion: 'shivering',
+        avatar: '/assets/characters/cinderella_cold.png',
+        position: 'center'
+      },
+      dialogue: {
+        speaker: 'Золушка',
+        text: 'О нет! На лестнице упал старый канделябр — ковер и ступени объяты пламенем! Мне не пройти к выходу из башни!'
+      },
+      puzzle: {
+        problem_title: 'Огонь на винтовой лестнице',
+        description: 'Огонь преграждает путь! Как преодолеть пламя?',
+        choices: [
+          {
+            id: 'choice_bucket',
+            text: 'Ведро с талой водой',
+            item_icon: 'bucket',
+            type: 'standard',
+            cost: 0,
+            result: 'success',
+            feedback_text: 'Ш-ш-ш! Вода сбивает часть пламени, и Золушка проскакивает через дым во внутренний двор замка!',
+            next_node: 'node_finish',
+            stat_changes: {
+              courage: 1
+            }
+          },
+          {
+            id: 'choice_fan',
+            text: 'Перьевой веер',
+            item_icon: 'fan',
+            type: 'fail',
+            cost: 0,
+            result: 'fail',
+            feedback_text: 'Взмах веера только раздувает пламя! Искры опалили подол платья! Пришлось отскочить назад.',
+            sound_sfx: 'fire_whoosh',
+            next_node: 'node_3_fire',
+            stat_changes: {}
+          },
+          {
+            id: 'choice_ice_amulet',
+            text: 'Ледяной амулет Северного ветра',
+            item_icon: 'ice_amulet',
+            type: 'premium',
+            cost: 25,
+            allow_ad: false,
+            result: 'premium_success',
+            feedback_text: 'Амулет излучает арктический холод! Пламя мгновенно замерзает хрустальной ледяной скульптурой. На ступенях появляется Принц!',
+            sound_sfx: 'ice_freeze',
+            bonus_text: 'Принц поражен вашей отвагой и предлагает руку!',
+            next_node: 'node_finish',
+            stat_changes: {
+              courage: 3,
+              prince_affinity: 1
+            }
+          }
+        ]
+      }
+    },
+    node_finish: {
+      id: 'node_finish',
+      title: 'Свобода и путь на бал',
+      background: 'corridor_fire',
+      bg_music: 'triumph_theme',
+      character: {
+        id: 'prince',
+        name: 'Принц Анри',
+        emotion: 'triumphant',
+        avatar: '/assets/characters/prince_cape.png',
+        position: 'center'
+      },
+      dialogue: {
+        speaker: 'Принц Анри',
+        text: 'Вы спаслись из ледяной башни! Карета подана, и бал вот-вот начнется. Ваша судьба только начинается...'
+      },
+      summary: {
+        title: 'Глава 1: «Ледяная Башня» успешно завершена!',
+        reward_crystals: 5,
+        next_episode_id: 'cinderella-ep2'
+      }
     }
-  },
-
-  // Этап 1: Труба заменена на обогреватель с чайником (Primer/13.jpg - 17.jpg)
-  {
-    step: 1,
-    background: '/assets/primer/13.jpg',
-    title: 'Тепло от печки (1/12)',
-    dialogues: [
-      {
-        speaker: 'Миа',
-        text: 'Мамочка, мне очень холодно...',
-        avatar: '/assets/primer/14.jpg',
-        ribbonColor: 'blue'
-      },
-      {
-        speaker: 'Аманда',
-        text: 'Не бойся, милая. Мы справимся с этим.',
-        avatar: '/assets/primer/15.jpg',
-        ribbonColor: 'blue'
-      },
-      {
-        speaker: 'Изабелла',
-        text: 'От печки пошло первое тепло, но метель из разбитого окна все выдувает! Нужно починить окно!',
-        avatar: '/assets/primer/16.jpg',
-        ribbonColor: 'blue'
-      }
-    ],
-    hotspot: {
-      id: 'window_repair',
-      title: 'Застеклить окно',
-      costStars: 2,
-      iconType: 'window',
-      x: 39,
-      y: 31
-    }
-  },
-
-  // Этап 2: Окно отремонтировано, шторы, часы (Primer/18.jpg - 19.jpg)
-  {
-    step: 2,
-    background: '/assets/primer/18.jpg',
-    title: 'Уютное окно (2/12)',
-    dialogues: [
-      {
-        speaker: 'Аманда',
-        text: 'Смотри, метель больше не задувает! В комнате наконец-то стало тихо.',
-        avatar: '/assets/primer/10.jpg',
-        ribbonColor: 'blue'
-      },
-      {
-        speaker: 'Изабелла',
-        text: 'Вентилятор под потолком опасно искрит и вот-вот упадет. Нужно починить его и включить свет!',
-        avatar: '/assets/primer/6.jpg',
-        ribbonColor: 'blue'
-      }
-    ],
-    hotspot: {
-      id: 'fan_repair',
-      title: 'Починить люстру',
-      costStars: 1,
-      iconType: 'wrench',
-      x: 80,
-      y: 19
-    }
-  },
-
-  // Этап 3: Люстра починена и светит золотым светом (Primer/20.jpg)
-  {
-    step: 3,
-    background: '/assets/primer/20.jpg',
-    title: 'Теплый свет (3/12)',
-    dialogues: [
-      {
-        speaker: 'Изабелла',
-        text: 'Какой мягкий золотой свет! В комнате стало светлее и радостнее.',
-        avatar: '/assets/primer/1.jpg',
-        ribbonColor: 'blue'
-      },
-      {
-        speaker: 'Аманда',
-        text: 'На полу ледяная жижа и мусор, а детям негде играть. Нам нужен теплый ковер и шкаф для книг.',
-        avatar: '/assets/primer/10.jpg',
-        ribbonColor: 'blue'
-      }
-    ],
-    hotspot: {
-      id: 'furniture_repair',
-      title: 'Постелить ковер и шкаф',
-      costStars: 2,
-      iconType: 'rug',
-      x: 68,
-      y: 78
-    }
-  },
-
-  // Этап 4: Книжный шкаф, желтый пушистый ковер, столик для рисования (Primer/25.jpg)
-  {
-    step: 4,
-    background: '/assets/primer/25.jpg',
-    title: 'Детский уголок (7/12)',
-    dialogues: [
-      {
-        speaker: 'Миа',
-        text: 'Ура! У меня появился свой столик с цветными мелками и плюшевый мишка!',
-        avatar: '/assets/primer/3.jpg',
-        ribbonColor: 'blue'
-      },
-      {
-        speaker: 'Аманда',
-        text: 'Ты творишь настоящие чудеса! Но постель все еще холодная, а дети в рваных платьях.',
-        avatar: '/assets/primer/10.jpg',
-        ribbonColor: 'blue'
-      },
-      {
-        speaker: 'Изабелла',
-        text: 'Обустроим удобную теплую кровать с мягким одеялом и оденем семью в новые наряды!',
-        avatar: '/assets/primer/6.jpg',
-        ribbonColor: 'blue'
-      }
-    ],
-    hotspot: {
-      id: 'bed_repair',
-      title: 'Утеплить постель',
-      costStars: 2,
-      iconType: 'bed',
-      x: 48,
-      y: 53
-    }
-  },
-
-  // Этап 5: Чистая одежда, новая постель, счастливые дети (Primer/30.jpg)
-  {
-    step: 5,
-    background: '/assets/primer/30.jpg',
-    title: 'Счастливая семья (10/12)',
-    dialogues: [
-      {
-        speaker: 'Изабелла',
-        text: 'Конечно. Лестер – жестокий бизнесмен, скупает город дёшево, не думая о людях.',
-        avatar: '/assets/primer/30.jpg',
-        ribbonColor: 'blue'
-      },
-      {
-        speaker: 'Аманда',
-        text: 'Но теперь нам не страшен никакой Лестер! Наш дом полон тепла, а дети сыты и улыбаются.',
-        avatar: '/assets/primer/30.jpg',
-        ribbonColor: 'blue'
-      },
-      {
-        speaker: 'Изабелла',
-        text: 'Остался финальный штрих — включить торшер и украсить комнату к празднику!',
-        avatar: '/assets/primer/30.jpg',
-        ribbonColor: 'blue'
-      }
-    ],
-    hotspot: {
-      id: 'lamp_decor',
-      title: 'Зажечь торшер',
-      costStars: 1,
-      iconType: 'lamp',
-      x: 90,
-      y: 45
-    }
-  },
-
-  // Этап 6: Финал - 100% обустроенная комната, шарики, победа! (Primer/40.jpg & 41.jpg)
-  {
-    step: 6,
-    background: '/assets/primer/40.jpg',
-    title: 'Комната спасена! (12/12)',
-    isCompleted: true,
-    dialogues: [
-      {
-        speaker: 'Миа',
-        text: 'Спасибо тебе, наш самый лучший защитник! Это самый уютный дом на свете!',
-        avatar: '/assets/primer/40.jpg',
-        ribbonColor: 'gold'
-      }
-    ]
   }
-];
+};

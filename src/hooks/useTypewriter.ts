@@ -12,48 +12,56 @@ export interface UseTypewriterOptions {
 }
 
 export function useTypewriter(text: string, options: UseTypewriterOptions = {}) {
-  const { speed = 18, onCharacter, onComplete } = options;
-  const [displayedText, setDisplayedText] = useState(text ? text.slice(0, 1) : '');
-  const [isCompleted, setIsCompleted] = useState(false);
+  const { speed = 25, onCharacter, onComplete } = options;
+  const [displayedText, setDisplayedText] = useState(text || '');
+  const [isCompleted, setIsCompleted] = useState(true);
 
   const textRef = useRef(text);
+  const onCharRef = useRef(onCharacter);
+  const onCompRef = useRef(onComplete);
   const indexRef = useRef(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Сброс при смене текста
+  useEffect(() => {
+    onCharRef.current = onCharacter;
+    onCompRef.current = onComplete;
+  });
+
+  // Запуск печатания только при реальной смене текста
   useEffect(() => {
     textRef.current = text;
+    if (!text) {
+      setDisplayedText('');
+      setIsCompleted(true);
+      return;
+    }
+
     setDisplayedText('');
     setIsCompleted(false);
     indexRef.current = 0;
 
     if (timerRef.current) clearInterval(timerRef.current);
 
-    if (!text) {
-      setIsCompleted(true);
-      return;
-    }
-
     timerRef.current = setInterval(() => {
       indexRef.current += 1;
       const nextSlice = textRef.current.slice(0, indexRef.current);
       setDisplayedText(nextSlice);
 
-      if (onCharacter && indexRef.current % 2 === 0) {
-        onCharacter();
+      if (onCharRef.current && indexRef.current % 3 === 0) {
+        onCharRef.current();
       }
 
       if (indexRef.current >= textRef.current.length) {
         if (timerRef.current) clearInterval(timerRef.current);
         setIsCompleted(true);
-        if (onComplete) onComplete();
+        if (onCompRef.current) onCompRef.current();
       }
     }, speed);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [text, speed, onCharacter, onComplete]);
+  }, [text, speed]);
 
   // Мгновенный пропуск (Skip)
   const skip = useCallback(() => {

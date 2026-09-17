@@ -1,117 +1,94 @@
 /**
  * @file TopBar.tsx
- * Верхняя панель в точном визуальном стиле Tile Family (Primer/1.jpg & 12.jpg)
- * Никаких неоновых AI акцентов — теплая уютная палитра, капсулы валют, золотые звезды ⭐ и сундучок прогресса.
+ * Верхняя панель: Баланс кристаллов 💎, ключей 🔑, индикатор статов и звук
  */
 
 import React from 'react';
-import { Settings } from 'lucide-react';
+import { Volume2, VolumeX, Sparkles, Shield, Heart } from 'lucide-react';
+import { UserStats } from '../types/game';
 
 interface TopBarProps {
-  coins: number;
-  lives: number;
-  stars: number;
   crystals: number;
-  currentStep: number;
-  totalSteps: number;
+  keys: number;
+  stats: UserStats;
+  isMuted: boolean;
+  onToggleSound: () => void;
+  onOpenStats: () => void;
   onOpenShop: () => void;
-  onOpenSettings: () => void;
 }
 
 export const TopBar: React.FC<TopBarProps> = ({
-  coins = 2000,
-  lives = 5,
-  stars = 2,
-  crystals: _crystals = 25,
-  currentStep = 0,
-  totalSteps = 12,
+  crystals,
+  keys,
+  stats,
+  isMuted,
+  onToggleSound,
+  onOpenStats,
   onOpenShop,
-  onOpenSettings
 }) => {
-  const progressPercent = Math.min(100, Math.round((currentStep / totalSteps) * 100));
-
   return (
-    <header className="relative w-full z-40 px-2.5 pt-2 pb-1 flex flex-col gap-1.5 select-none pointer-events-auto">
-      {/* 1. Верхний ряд: Монеты, Жизни, Звезды, Настройки (Primer/1.jpg) */}
-      <div className="flex items-center justify-between gap-1.5">
-        
-        {/* Аватарка персонажа / профиля */}
-        <div className="relative w-10 h-10 rounded-full p-0.5 bg-gradient-to-b from-amber-200 via-amber-400 to-amber-600 border border-white shadow-md shrink-0">
-          <div className="w-full h-full rounded-full overflow-hidden bg-amber-100 flex items-center justify-center">
-            <span className="text-xl">🐶</span>
-          </div>
-        </div>
-
-        {/* Капсула монет (Primer/1.jpg: 2000 +) */}
-        <button
-          onClick={onOpenShop}
-          className="flex-1 flex items-center justify-between bg-gradient-to-b from-[#FFFDF7] to-[#F7ECD4] border-[1.5px] border-[#D4A373] rounded-full px-2 py-1 shadow-[0_2px_6px_rgba(0,0,0,0.25)] active:scale-95 transition-transform"
-          title="Монеты"
-        >
-          <div className="flex items-center gap-1 min-w-0">
-            <span className="text-base drop-shadow">🪙</span>
-            <span className="text-[12px] font-black text-[#5C3A21] truncate leading-none">
-              {coins}
-            </span>
-          </div>
-          <div className="w-4 h-4 rounded-full bg-gradient-to-b from-emerald-400 to-emerald-600 border border-white flex items-center justify-center text-white text-[11px] font-black shadow-sm ml-1 shrink-0">
-            +
-          </div>
-        </button>
-
-        {/* Капсула жизней / энергии (Primer/1.jpg: ❤️ 5 Полный) */}
-        <div className="flex-1 flex items-center gap-1 bg-gradient-to-b from-[#FFFDF7] to-[#F7ECD4] border-[1.5px] border-[#D4A373] rounded-full px-2 py-1 shadow-[0_2px_6px_rgba(0,0,0,0.25)]">
-          <span className="text-base drop-shadow">❤️</span>
-          <span className="text-[12px] font-black text-[#B91C1C] leading-none">{lives}</span>
-          <span className="text-[9px] font-bold text-[#7A4B29] hidden sm:inline leading-none">Полный</span>
-        </div>
-
-        {/* Капсула Звезд ⭐ (Главная валюта ремонта в Tile Family) */}
+    <header className="fixed top-0 left-0 right-0 z-40 px-3 py-2.5 bg-gradient-to-b from-black/90 via-slate-950/75 to-transparent backdrop-blur-sm flex items-center justify-between select-none">
+      {/* Левая группа: Ключи (Энергия) и Кристаллы (Премиум) */}
+      <div className="flex items-center gap-2">
+        {/* Ключи для доступа к главам */}
         <div 
-          onClick={onOpenShop}
-          className="flex-1 flex items-center justify-center gap-1 bg-gradient-to-b from-[#FFFDF7] to-[#F7ECD4] border-[1.5px] border-amber-400 rounded-full px-2 py-1 shadow-[0_2px_6px_rgba(0,0,0,0.25)] cursor-pointer active:scale-95 transition-transform"
-          title="Звезды для ремонта"
+          className="flex items-center gap-1.5 bg-gradient-to-r from-amber-950/90 to-slate-900/90 border border-amber-500/50 rounded-full px-3 py-1 text-xs font-bold text-amber-100 shadow-md"
+          title="Ключи для доступа к главам"
         >
-          <span className="text-base drop-shadow animate-pulse">⭐</span>
-          <span className="text-[13px] font-black text-amber-900 leading-none">{stars}</span>
+          <span className="text-sm drop-shadow">🗝️</span>
+          <span>{keys}/2</span>
         </div>
 
-        {/* Кнопка настроек в стиле синего деревянного цветка (Primer/1.jpg) */}
+        {/* Кристаллы */}
         <button
-          onClick={onOpenSettings}
-          className="w-8 h-8 rounded-full bg-gradient-to-b from-sky-400 via-blue-500 to-blue-700 border-[1.5px] border-white flex items-center justify-center text-white shadow-md active:scale-90 transition-transform shrink-0"
-          aria-label="Настройки"
+          onClick={onOpenShop}
+          className="flex items-center gap-1.5 bg-gradient-to-r from-sky-950/90 to-blue-950/90 border border-sky-400/60 rounded-full px-3 py-1 text-xs font-black text-sky-100 shadow-md active:scale-95 transition-transform hover:brightness-110"
         >
-          <Settings className="w-4 h-4 stroke-[2.5]" />
+          <span className="text-sm animate-pulse drop-shadow">💎</span>
+          <span>{crystals}</span>
+          <span className="bg-sky-400/30 text-sky-200 border border-sky-300/40 rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-black ml-0.5 shadow-sm">
+            +
+          </span>
         </button>
       </div>
 
-      {/* 2. Нижний ряд: Глянцевая синяя шкала прогресса комнаты с сундучком (Primer/1.jpg & 12.jpg) */}
-      <div className="w-full flex items-center justify-center px-4">
-        <div className="relative w-full max-w-xs h-6 bg-[#004B87] border-2 border-[#60A5FA] rounded-full p-0.5 shadow-[0_3px_10px_rgba(0,0,0,0.4)] flex items-center">
-          
-          {/* Заливка прогресса сочным зеленым градиентом */}
-          <div
-            className="h-full bg-gradient-to-r from-emerald-400 via-green-400 to-emerald-500 rounded-full transition-all duration-500 shadow-inner flex items-center justify-end pr-1"
-            style={{ width: `${Math.max(8, progressPercent)}%` }}
-          />
-
-          {/* Цифры прогресса по центру */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span className="text-[11px] font-black text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] tracking-wider">
-              {currentStep}/{totalSteps}
-            </span>
+      {/* Правая группа: Статы и Звук */}
+      <div className="flex items-center gap-2">
+        {/* Кнопка статов героя */}
+        <button
+          onClick={onOpenStats}
+          className="flex items-center gap-2 bg-gradient-to-r from-slate-900/90 to-purple-950/80 border border-amber-500/40 rounded-full px-3 py-1 text-xs font-bold text-amber-200 shadow-md active:scale-95 transition-transform"
+        >
+          <div className="flex items-center gap-1">
+            <Shield className="w-3.5 h-3.5 text-amber-400" />
+            <span>{stats.courage}</span>
           </div>
+          {stats.light_path > 0 && (
+            <div className="flex items-center gap-1 text-sky-300">
+              <Sparkles className="w-3 h-3" />
+              <span>{stats.light_path}</span>
+            </div>
+          )}
+          {stats.prince_affinity > 0 && (
+            <div className="flex items-center gap-1 text-rose-400">
+              <Heart className="w-3 h-3 fill-rose-400" />
+              <span>{stats.prince_affinity}</span>
+            </div>
+          )}
+        </button>
 
-          {/* Золотой сундук на конце шкалы (Primer/12.jpg) */}
-          <div 
-            onClick={onOpenShop}
-            className="absolute -right-3 w-8 h-8 rounded-full bg-gradient-to-b from-amber-300 via-amber-400 to-amber-600 border-2 border-white flex items-center justify-center text-sm shadow-[0_3px_10px_rgba(245,158,11,0.6)] cursor-pointer animate-bounce"
-            title="Сундук главы"
-          >
-            🎁
-          </div>
-        </div>
+        {/* Переключатель звука */}
+        <button
+          onClick={onToggleSound}
+          className="w-8 h-8 rounded-full bg-slate-900/90 border border-amber-500/40 flex items-center justify-center text-slate-200 shadow-md active:scale-95 transition-transform"
+          aria-label="Звук"
+        >
+          {isMuted ? (
+            <VolumeX className="w-4 h-4 text-slate-400" />
+          ) : (
+            <Volume2 className="w-4 h-4 text-amber-400" />
+          )}
+        </button>
       </div>
     </header>
   );
