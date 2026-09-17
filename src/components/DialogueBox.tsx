@@ -43,7 +43,7 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({
   return (
     <div 
       onClick={handleClick}
-      className="relative w-full max-w-md mx-auto cursor-pointer select-none transition-all active:scale-[0.99] animate-pop-in"
+      className="relative w-full max-w-md mx-auto cursor-pointer select-none transition-all active:scale-[0.99] animate-pop-in mb-2"
     >
       {/* Кнопка "Пропустить ▶▶" */}
       <div className="flex justify-end mb-1 pr-1">
@@ -53,48 +53,52 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({
             skip();
             if (isCompleted && onClickNext) onClickNext();
           }}
-          className="flex items-center gap-1 text-[11px] font-bold text-amber-200/80 hover:text-amber-100 bg-slate-900/70 hover:bg-slate-900/90 px-2.5 py-0.5 rounded-full border border-amber-500/30 backdrop-blur-sm shadow transition-transform active:scale-95"
+          className="flex items-center gap-1 text-[11px] font-bold text-white bg-black/60 hover:bg-black/80 px-2.5 py-0.5 rounded-full border border-white/30 backdrop-blur-sm shadow transition-transform active:scale-95"
         >
           <span>Пропустить</span>
           <span className="text-[9px]">▶▶</span>
         </button>
       </div>
 
-      {/* Основной контейнер диалога */}
-      <div className="relative pt-4 pb-3.5 px-4 rounded-2xl bg-gradient-to-b from-[#1C1D24]/95 via-[#16171D]/95 to-[#111217]/95 border-[1.5px] border-amber-500/40 shadow-[0_12px_35px_rgba(0,0,0,0.85)] backdrop-blur-md flex flex-col justify-between min-h-[92px]">
+      {/* Аутентичный речевой бабл (Tile Family style) */}
+      <div className="relative pt-3.5 pb-2.5 px-3.5 rounded-[20px] bg-gradient-to-b from-[#FFFDF8] via-[#FFF9EE] to-[#FDF5E6] border-[2px] border-[#EBD7B0] shadow-[0_8px_25px_rgba(0,0,0,0.6)] flex flex-col justify-between">
         
-        {/* Верхняя строка: Аватар и Имя персонажа */}
-        <div className="flex items-center gap-2.5 -mt-7 mb-2">
+        {/* Хвостик речевого бабла вверх к персонажу */}
+        <div className="absolute -top-2.5 left-10 w-0 h-0 border-l-[7px] border-l-transparent border-r-[7px] border-r-transparent border-b-[10px] border-b-[#EBD7B0]">
+          <div className="absolute top-[2px] -left-[6px] w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[8px] border-b-[#FFFDF8]" />
+        </div>
+
+        {/* Верхняя строка: Аватар и Плашка с именем */}
+        <div className="flex items-center gap-2 -mt-6 mb-1.5">
           {avatar && (
-            <div className="relative w-11 h-11 rounded-full border-2 border-amber-400 bg-amber-950/80 shadow-lg overflow-hidden shrink-0">
+            <div className="relative w-10 h-10 rounded-full border-2 border-amber-400 bg-amber-100 shadow-md overflow-hidden shrink-0">
               <img
                 src={avatar}
                 alt={speaker}
                 className="w-full h-full object-cover object-top"
                 onError={(e) => {
-                  // Fallback если картинка не найдена
                   (e.target as HTMLElement).style.display = 'none';
                 }}
               />
             </div>
           )}
 
-          {/* Имя говорящего */}
-          <div className="px-3.5 py-0.5 rounded-full bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 text-slate-950 text-xs font-black tracking-wider uppercase shadow-md border border-amber-300">
+          {/* Плашка с именем персонажа */}
+          <div className="px-3.5 py-0.5 rounded-full bg-gradient-to-r from-blue-600 via-sky-500 to-blue-600 text-white text-[11px] font-black tracking-wider uppercase shadow-md border border-white/70">
             {speaker}
           </div>
         </div>
 
-        {/* Текст реплики */}
-        <p className="text-[#F1E8D9] text-[13.5px] sm:text-[14.5px] leading-relaxed font-sans font-medium">
+        {/* Текст реплики темно-шоколадным цветом */}
+        <p className="text-[#3D2614] text-[13px] sm:text-[14px] leading-snug font-sans font-bold">
           {displayedText}
           {!isCompleted && (
-            <span className="inline-block w-1.5 h-3.5 ml-1 bg-amber-400 animate-pulse align-middle" />
+            <span className="inline-block w-1.5 h-3.5 ml-1 bg-amber-600 animate-pulse align-middle" />
           )}
         </p>
 
         {/* Нижняя подсказка или кнопка Далее */}
-        <div className="mt-2 flex items-center justify-end">
+        <div className="mt-1 flex items-center justify-end">
           {showNextButton && isCompleted ? (
             <button
               onClick={(e) => {
@@ -104,13 +108,13 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({
                   onClickNext();
                 }
               }}
-              className="flex items-center gap-1 text-[11px] font-black text-slate-950 bg-gradient-to-r from-amber-400 to-amber-500 px-3 py-1 rounded-full shadow-md active:scale-95 animate-pulse"
+              className="flex items-center gap-1 text-[11px] font-black text-white bg-gradient-to-r from-emerald-500 to-green-600 px-3 py-0.5 rounded-full shadow-md active:scale-95 animate-pulse"
             >
               <span>Продолжить</span>
               <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
             </button>
           ) : (
-            <span className="text-[10px] text-amber-200/50 font-medium">
+            <span className="text-[10px] text-amber-900/60 font-semibold">
               {isCompleted ? 'Нажмите, чтобы продолжить ❯' : 'Нажмите, чтобы показать всё'}
             </span>
           )}

@@ -66,7 +66,7 @@ export const ChoiceButtons: React.FC<ChoiceButtonsProps> = ({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto flex flex-col gap-2.5 z-30 select-none">
+    <div className="w-full max-w-md mx-auto grid grid-cols-3 gap-2 z-30 select-none">
       {choices.map((choice) => {
         const isPremium = choice.type === 'premium';
         const isFail = choice.type === 'fail';
@@ -75,75 +75,68 @@ export const ChoiceButtons: React.FC<ChoiceButtonsProps> = ({
         return (
           <div
             key={choice.id}
-            className={`relative group rounded-2xl p-0.5 transition-all transform active:scale-[0.98] ${
+            className={`relative rounded-2xl p-0.5 transition-all transform active:scale-95 ${
               isPremium
-                ? 'bg-gradient-to-r from-amber-400 via-sky-400 to-amber-300 shadow-[0_4px_18px_rgba(56,189,248,0.35)] hover:brightness-110'
+                ? 'bg-gradient-to-b from-amber-300 via-sky-400 to-amber-500 shadow-[0_6px_20px_rgba(56,189,248,0.4)] hover:brightness-110'
                 : isFail
-                ? 'bg-gradient-to-r from-stone-600 via-rose-700/60 to-stone-700 shadow-md'
-                : 'bg-gradient-to-r from-amber-700/70 via-amber-500/70 to-stone-700 shadow-md'
+                ? 'bg-gradient-to-b from-stone-600 via-rose-700 to-stone-800 shadow-md'
+                : 'bg-gradient-to-b from-amber-400/80 via-amber-600 to-stone-800 shadow-md'
             }`}
           >
             <button
               disabled={disabled}
               onClick={() => onSelectChoice(choice)}
-              className={`w-full flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-md text-left transition-colors ${
+              className={`w-full h-full min-h-[105px] flex flex-col items-center justify-between p-2 rounded-[14px] text-center transition-colors ${
                 isPremium
-                  ? 'bg-gradient-to-r from-[#111928]/95 to-[#1E293B]/95 text-white hover:bg-slate-900/95'
+                  ? 'bg-gradient-to-b from-[#162032]/95 to-[#0D131F]/95 text-white hover:bg-slate-900/95'
                   : isFail
-                  ? 'bg-gradient-to-r from-[#1E1919]/95 to-[#1A1A22]/95 text-stone-200 hover:bg-stone-900/95'
-                  : 'bg-gradient-to-r from-[#1E1B18]/95 to-[#24201A]/95 text-amber-50 hover:bg-amber-950/90'
+                  ? 'bg-gradient-to-b from-[#251A1A]/95 to-[#141214]/95 text-stone-200 hover:bg-stone-900/95'
+                  : 'bg-gradient-to-b from-[#262019]/95 to-[#151210]/95 text-amber-50 hover:bg-amber-950/90'
               }`}
             >
-              {/* Левая часть: Иконка предмета и Название */}
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-b from-amber-950/70 to-slate-950/90 border border-amber-500/40 flex items-center justify-center p-1.5 shrink-0 shadow-inner">
-                  {renderItemIcon(choice.item_icon)}
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm sm:text-base leading-tight drop-shadow-sm">
-                    {choice.text}
-                  </h4>
-                  {isPremium && (
-                    <p className="text-[11px] text-sky-300 font-semibold flex items-center gap-1 mt-0.5">
-                      <Sparkles className="w-3 h-3" />
-                      <span>Магическое решение</span>
-                    </p>
-                  )}
-                  {isFail && (
-                    <p className="text-[11px] text-rose-300/80 font-medium mt-0.5">
-                      Рискованный поступок
-                    </p>
-                  )}
-                </div>
+              {/* Верхняя иконка */}
+              <div className="w-12 h-12 rounded-xl bg-black/40 border border-white/10 flex items-center justify-center p-1 shrink-0 shadow-inner">
+                {renderItemIcon(choice.item_icon)}
               </div>
 
-              {/* Правая часть: Цена или Кнопка Рекламы */}
-              <div className="flex items-center gap-1.5 shrink-0 ml-2">
+              {/* Название */}
+              <div className="my-1">
+                <h4 className="font-bold text-[11px] sm:text-xs leading-tight line-clamp-2">
+                  {choice.text}
+                </h4>
+              </div>
+
+              {/* Плашка стоимости / бейдж */}
+              <div className="w-full mt-auto">
                 {isPremium ? (
                   hasEnoughCrystals ? (
-                    <div className="flex items-center gap-1 bg-gradient-to-r from-sky-500 to-blue-600 text-white font-black text-xs px-3 py-1.5 rounded-full shadow-md border border-sky-300/50">
+                    <div className="flex items-center justify-center gap-1 bg-gradient-to-r from-sky-500 to-blue-600 text-white font-black text-[11px] py-1 rounded-full shadow-md border border-sky-300/50">
                       <span>💎</span>
                       <span>{choice.cost}</span>
                     </div>
                   ) : choice.allow_ad && onWatchAdForChoice ? (
-                    <button
+                    <span
                       onClick={(e) => {
                         e.stopPropagation();
                         onWatchAdForChoice(choice);
                       }}
-                      className="flex items-center gap-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-slate-950 font-black text-[11px] px-2.5 py-1.5 rounded-full shadow-md border border-emerald-300/60 active:scale-95 transition-transform"
+                      className="flex items-center justify-center gap-1 bg-gradient-to-r from-emerald-500 to-green-600 text-slate-950 font-black text-[10px] py-1 rounded-full shadow border border-emerald-300 active:scale-95"
                     >
                       <Tv className="w-3 h-3 stroke-[2.5]" />
                       <span>Бесплатно</span>
-                    </button>
+                    </span>
                   ) : (
-                    <div className="flex items-center gap-1 bg-slate-800 text-slate-400 font-bold text-xs px-2.5 py-1 rounded-full border border-slate-600">
+                    <div className="flex items-center justify-center gap-1 bg-slate-800 text-slate-400 font-bold text-[11px] py-1 rounded-full border border-slate-600">
                       <span>💎</span>
                       <span>{choice.cost}</span>
                     </div>
                   )
+                ) : isFail ? (
+                  <span className="block text-[10px] font-bold text-rose-300/90 bg-rose-950/50 py-0.5 rounded-full border border-rose-500/30">
+                    Риск
+                  </span>
                 ) : (
-                  <span className="text-[11px] font-bold text-amber-200/60 bg-amber-950/40 px-2.5 py-1 rounded-full border border-amber-500/20">
+                  <span className="block text-[10px] font-bold text-amber-200/80 bg-amber-950/50 py-0.5 rounded-full border border-amber-500/30">
                     Обычный
                   </span>
                 )}

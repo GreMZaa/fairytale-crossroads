@@ -106,21 +106,19 @@ export const LayerEngine: React.FC<LayerEngineProps> = ({
     if (!node.character) return null;
 
     const isPrince = node.character.id === 'prince';
-    const hasPuzzle = Boolean(node.puzzle || node.timer_rescue);
 
     return (
       <div 
-        className={`absolute z-20 pointer-events-none transition-all duration-700 max-w-[85vw] ${
-          hasPuzzle ? 'bottom-52 sm:bottom-60' : 'bottom-32 sm:bottom-36'
-        } ${
-          node.character.position === 'right' ? 'right-2 sm:right-8' : 'left-1/2 -translate-x-1/2'
-        } ${isFailState ? 'animate-shake' : 'animate-pulse-subtle'}`}
+        className={`absolute inset-x-0 z-20 pointer-events-none transition-all duration-700 flex justify-center items-end ${
+          isFailState ? 'animate-shake' : 'animate-pulse-subtle'
+        }`}
+        style={{ top: '62px', bottom: '190px' }}
       >
-        <div className="relative flex flex-col items-center">
+        <div className="relative h-full max-h-full flex items-end justify-center px-4">
           <img
             src={isPrince ? '/assets/characters/prince_cape.png' : '/assets/characters/cinderella_cold.png'}
             alt={node.character.name}
-            className="w-48 h-68 sm:w-60 sm:h-84 object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.85)] filter contrast-105"
+            className="max-h-full w-auto max-w-[85vw] object-contain object-bottom drop-shadow-[0_15px_30px_rgba(0,0,0,0.9)] filter contrast-105"
             onError={(e) => {
               (e.target as HTMLElement).style.display = 'none';
             }}
