@@ -1,0 +1,72 @@
+{
+  "mcpServers": {
+    "telegram": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@modelcontextprotocol/server-telegram"],
+      "env": {
+        "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN}"
+      },
+      "description": "Управление ботом, каналом, оповещения и продажи в Telegram"
+    },
+    "yookassa": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "yookassa-mcp-server"],
+      "env": {
+        "YOOKASSA_SHOP_ID": "${YOOKASSA_SHOP_ID}",
+        "YOOKASSA_SECRET_KEY": "${YOOKASSA_SECRET_KEY}"
+      },
+      "description": "Прием оплат в РФ, СБП, чеки 54-ФЗ, подписки и начисление кристаллов"
+    },
+    "yandex-cloud": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "yandex-cloud-mcp"],
+      "env": {
+        "YC_OAUTH_TOKEN": "${YC_OAUTH_TOKEN}",
+        "YC_FOLDER_ID": "${YC_FOLDER_ID}"
+      },
+      "description": "Хостинг в РФ, Object Storage для спрайтов и фонов новеллы без VPN"
+    },
+    "github": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      },
+      "description": "Управление репозиторием, коммиты, PR и версионирование"
+    },
+    "supabase": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@supabase/mcp-server"],
+      "env": {
+        "SUPABASE_URL": "${SUPABASE_URL}",
+        "SUPABASE_SERVICE_ROLE_KEY": "${SUPABASE_SERVICE_ROLE_KEY}"
+      },
+      "description": "База данных PostgreSQL, RLS политики, миграции и серверные функции"
+    },
+    "notion": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@modelcontextprotocol/server-notion"],
+      "env": {
+        "NOTION_API_KEY": "${NOTION_API_KEY}"
+      },
+      "description": "База знаний сюжета, сценарии новеллы и CRM игроков"
+    },
+    "firecrawl": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "firecrawl-mcp"],
+      "env": {
+        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}"
+      },
+      "description": "Сбор данных, анализ референсов новелл, парсинг отзывов и трендов"
+    },
+    "n8n": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "n8n-mcp"],
+      "env": {
+        "N8N_API_KEY": "${N8N_API_KEY}",
+        "N8N_BASE_URL": "${N8N_BASE_URL}"
+      },
+      "description": "Связка сервисов, авто-публикация анонсов в каналы и триггеры"
+    }
+  }
+}

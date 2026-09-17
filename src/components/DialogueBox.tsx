@@ -1,6 +1,7 @@
 /**
  * @file DialogueBox.tsx
- * Диалоговое окно новеллы с эффектом «Печатной машинки» и пропуском по тапу
+ * Речевой бабл диалогов в аутентичном стиле Tile Family (Primer/1.jpg - 7.jpg)
+ * Теплый кремовый фон, темный шоколадный шрифт, яркая синяя или красная плашка имени персонажа.
  */
 
 import React from 'react';
@@ -11,7 +12,8 @@ import { soundEngine } from '../utils/audio';
 interface DialogueBoxProps {
   speaker: string;
   text: string;
-  characterId?: string;
+  avatar?: string;
+  ribbonColor?: 'blue' | 'red' | 'gold';
   onFinished?: () => void;
   onClickNext?: () => void;
   showNextButton?: boolean;
@@ -20,13 +22,14 @@ interface DialogueBoxProps {
 export const DialogueBox: React.FC<DialogueBoxProps> = ({
   speaker,
   text,
-  characterId = 'cinderella',
+  avatar,
+  ribbonColor = 'blue',
   onFinished,
   onClickNext,
-  showNextButton = false
+  showNextButton = true
 }) => {
   const { displayedText, isCompleted, skip } = useTypewriter(text, {
-    speed: 15,
+    speed: 18,
     onCharacter: () => soundEngine.playTypewriterClick(),
     onComplete: onFinished
   });
@@ -40,62 +43,72 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({
     }
   };
 
-  const isPrince = characterId === 'prince';
+  const getRibbonGradient = () => {
+    if (ribbonColor === 'red') {
+      return 'from-rose-500 via-red-500 to-red-700';
+    }
+    if (ribbonColor === 'gold') {
+      return 'from-amber-400 via-amber-500 to-amber-600 text-amber-950';
+    }
+    return 'from-blue-500 via-sky-500 to-blue-600 text-white';
+  };
 
   return (
     <div 
       onClick={handleClick}
-      className="relative w-full cursor-pointer select-none transition-all active:scale-[0.99] z-30 animate-pop-in"
+      className="relative w-full cursor-pointer select-none transition-all active:scale-[0.99] z-30 animate-pop-in px-1"
     >
-      {/* Кнопка "Пропустить ▶▶" вверху справа */}
-      <div className="flex justify-end mb-1.5 pr-1">
+      {/* Кнопка "Пропустить ▶▶" (Primer/14.jpg) */}
+      <div className="flex justify-end mb-1 pr-1">
         <button
           onClick={(e) => {
             e.stopPropagation();
             skip();
             if (isCompleted && onClickNext) onClickNext();
           }}
-          className="flex items-center gap-1 text-[11px] font-black text-amber-200/90 hover:text-amber-100 bg-slate-900/80 hover:bg-slate-800/90 px-3 py-1 rounded-full border border-amber-500/40 shadow-md backdrop-blur-md transition-all active:scale-95"
+          className="flex items-center gap-1 text-[11px] font-black text-white bg-black/60 hover:bg-black/80 px-3 py-0.5 rounded-full border border-white/40 shadow backdrop-blur-sm transition-transform active:scale-95"
         >
           <span>Пропустить</span>
-          <span className="text-[9px]">▶▶</span>
+          <span className="text-[10px]">▶▶</span>
         </button>
       </div>
 
-      {/* Основной Речевой Бабл (Tile Family Style) */}
-      <div className="relative bg-[#FFF9EE] border-[2.5px] border-[#EAD4AA] rounded-[24px] p-4 pt-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.65)]">
+      {/* Основной Речевой Бабл (Tile Family: Primer/2.jpg) */}
+      <div className="relative bg-gradient-to-b from-[#FFFDF7] via-[#FFF9EE] to-[#FDF5E6] border-[2.5px] border-[#EAD4AA] rounded-[24px] p-3.5 pt-3 shadow-[0_12px_30px_rgba(0,0,0,0.55)]">
+        
         {/* Хвостик речевого бабла */}
-        <div className="absolute -top-3.5 left-10 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[14px] border-b-[#EAD4AA]">
-          <div className="absolute top-[2.5px] -left-[8px] w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[12px] border-b-[#FFF9EE]" />
+        <div className="absolute -top-3 left-8 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[12px] border-b-[#EAD4AA]">
+          <div className="absolute top-[2px] -left-[7px] w-0 h-0 border-l-[7px] border-l-transparent border-r-[7px] border-r-transparent border-b-[10px] border-b-[#FFFDF7]" />
         </div>
 
-        {/* Верхняя строка: Аватарка и Табличка с именем */}
-        <div className="flex items-center gap-2.5 -mt-8 mb-2">
-          {/* Круглый аватар персонажа с эмоцией */}
-          <div className="relative w-14 h-14 rounded-full border-[2.5px] border-amber-400 bg-gradient-to-b from-sky-100 to-amber-100 shadow-md overflow-hidden shrink-0">
-            <img
-              src={isPrince ? '/assets/characters/prince_cape.png' : '/assets/characters/cinderella_cold.png'}
-              alt={speaker}
-              className="w-full h-full object-cover object-top scale-125 translate-y-1"
-            />
-          </div>
+        {/* Верхняя строка: Аватарка и Плашка с именем (Primer/2.jpg) */}
+        <div className="flex items-center gap-2 -mt-7 mb-2">
+          {avatar && (
+            <div className="relative w-12 h-12 rounded-full border-2 border-amber-300 bg-amber-100 shadow-md overflow-hidden shrink-0">
+              <img
+                src={avatar}
+                alt={speaker}
+                className="w-full h-full object-cover object-top scale-130"
+              />
+            </div>
+          )}
 
-          {/* Плашка с именем (Яркий синий бейдж как в Tile Family) */}
-          <div className="px-4 py-1 rounded-full bg-gradient-to-r from-blue-500 via-sky-500 to-blue-600 text-white font-black text-xs tracking-wider shadow-md border border-white/60 uppercase">
+          {/* Плашка с именем персонажа */}
+          <div className={`px-4 py-0.5 rounded-full bg-gradient-to-r ${getRibbonGradient()} font-black text-xs tracking-wider shadow-md border border-white/80 uppercase`}>
             {speaker}
           </div>
         </div>
 
-        {/* Текст реплики с яркими акцентами */}
-        <div className="min-h-[46px] flex flex-col justify-between">
-          <p className="text-[#382214] text-[13px] sm:text-sm leading-relaxed font-bold font-sans">
+        {/* Текст реплики теплыми шоколадными буквами */}
+        <div className="min-h-[42px] flex flex-col justify-between">
+          <p className="text-[#4A2E18] text-[13px] sm:text-[14px] leading-snug font-bold font-sans">
             {displayedText}
             {!isCompleted && (
               <span className="inline-block w-1.5 h-3.5 ml-1 bg-amber-600 animate-pulse align-middle" />
             )}
           </p>
 
-          {/* Нижняя подсказка при завершении */}
+          {/* Нижняя кнопка «Далее» */}
           <div className="mt-1 flex items-center justify-end">
             {showNextButton && isCompleted ? (
               <button
@@ -106,10 +119,10 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({
                     onClickNext();
                   }
                 }}
-                className="flex items-center gap-1 text-xs font-black text-white bg-gradient-to-r from-emerald-500 to-emerald-600 hover:brightness-105 px-3.5 py-1 rounded-full shadow-md active:scale-95 animate-pulse"
+                className="flex items-center gap-1 text-[11px] font-black text-white bg-gradient-to-r from-emerald-500 to-green-600 px-3 py-0.5 rounded-full shadow active:scale-95 animate-pulse"
               >
                 <span>Далее</span>
-                <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
+                <ChevronRight className="w-3 h-3 stroke-[3]" />
               </button>
             ) : (
               <span className="text-[10px] text-amber-900/60 font-semibold">

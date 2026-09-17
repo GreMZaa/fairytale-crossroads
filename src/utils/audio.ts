@@ -218,6 +218,32 @@ class SoundEngine {
       // no-op
     }
   }
+
+  /**
+   * Победный фанфар при завершении уровня
+   */
+  public playVictoryFanfare() {
+    if (this.isMuted) return;
+    const ctx = this.getContext();
+    if (!ctx) return;
+    try {
+      const now = ctx.currentTime;
+      [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now + i * 0.1);
+        gain.gain.setValueAtTime(0.12, now + i * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.35);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + i * 0.1);
+        osc.stop(now + i * 0.1 + 0.35);
+      });
+    } catch {
+      // no-op
+    }
+  }
 }
 
 export const soundEngine = new SoundEngine();
